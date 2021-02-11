@@ -1,0 +1,1055 @@
+{
+	"info": {
+		"_postman_id": "78097aaf-3bf5-4f9e-b61e-07d3db2e451e",
+		"name": "radioative-game",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "account",
+			"item": [
+				{
+					"name": "add",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"name\",\n    \"email\": \"email@email.com\",\n    \"number\": \"12345\",\n    \"isLeader\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/accounts",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"name\",\n    \"email\": \"email@email.com\",\n    \"number\": \"12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/accounts/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"accounts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/accounts",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "accountGroup",
+			"item": [
+				{
+					"name": "add",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"name\",\n    \"accounts\": [\n        {\n            \"id\": 2\n        },\n        {\n            \"id\": 3\n        },\n        {\n            \"id\": 4\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/accountGroups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"accountGroups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/accountGroups/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"accountGroups",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "report",
+			"item": [
+				{
+					"name": "get by accountGroupId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/report/getByAccountGroupId/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"report",
+								"getByAccountGroupId",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get questions by accountGroupId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/report/getQuestionsByAccountGroupId/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"report",
+								"getQuestionsByAccountGroupId",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "transport",
+			"item": [
+				{
+					"name": "add",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountGroup\": {\n        \"id\": 2\n    },\n    \"accounts\": [\n        {\n            \"id\": 4\n        }\n    ],\n    \"carIndex\": 1,\n    \"fromEnvironment\": {\n        \"id\": 2\n    },\n    \"timestamp\": 1202020,\n    \"toEnvironment\": {\n        \"id\": 1\n    },\n    \"tools\": [\n        {\n            \"description\": \"teste\",\n                \"environment\": {\n                    \"id\": 1\n                }\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/transports",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"transports"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/transports/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"transports",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by index",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/transports/getByIndex/1/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"transports",
+								"getByIndex",
+								"1",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "chat",
+			"item": [
+				{
+					"name": "get",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/chatMessages",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"chatMessages"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"message\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/chatMessages/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"chatMessages",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by environmentId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/chatMessages/getByEnvironmentId/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"chatMessages",
+								"getByEnvironmentId",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/chatMessages/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"chatMessages",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "environment",
+			"item": [
+				{
+					"name": "add",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Hospital\",\n  \"description\": \"\",\n  \"icon\": \"LocalHospital\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/environments",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"environments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n      \"name\": \"Indústria 2\",\n      \"description\": \"Veículo oficial da CNEN chegando na cidade e pedindo informações a populares. <br />Por sorte encontram Viatura da Empresa no local e pedem que retornem ao Centro de Comando imediatamente, pois estavam perdidos na cidade e precisam se reunir com o Titular – Responsável Legal (Líder do Grupo).<br />Neste momento, a viatura pode ir até a Empresa e buscar um reforço para resolver o problema abaixo. Passe todas as informações para seu Lider.<br /><br />Neste ponto, Acidente com Fonte Ir-192 com 65 Ci<br /><br />Dados: <br /><br />Ci = 3,7 x 1010 Bq<br />&#9121;= 0,13 mSvh a 1 metro por GBq<br /><br />Operador 1<br />Distância fonte – dosímetro: 50 cm tempo de exposição máxima: 5,0 min.<br />Operador 2<br />Distância fonte – dosímetro: 1,5 m tempo de exposição máxima: 30 seg.<br /><br />O cabo de comando rompeu deixando a fonte radioativa livre no tubo guia, durante a última exposição.<br />Após as exposições em altura, o operador 1 a fim de encerrar as atividades do dia, recolheu o material, desconectando do irradiador o telecomando e desceu o andaime com o tubo guia envolto no pescoço (ver foto anexa).<br />O Operador 2 estava fazendo revelação de filmes e ao retornar na área de gamagrafia se deparou com o Operador 1. O Operador 2 detectou que a fonte radioativa não estava no irradiador”. Observação: No nosso exercício desprezaremos as doses nas gônodas do funcionário, assim como sua dose efetiva\",\n      \"icon\": \"Business\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/environments/4",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"environments",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/environments",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"environments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get with user responses",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/environments/getWithUserResponses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"environments",
+								"getWithUserResponses"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "question",
+			"item": [
+				{
+					"name": "add",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"1. description?\",\n    \"environment\": {\n        \"id\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/questions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"questions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"description\": \"1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec in lacus eget massa pellentesque blandit. Fusce non quam quis metus rhoncus tincidunt a quis libero. Sed semper lacinia lorem, et fringilla nulla ultrices sed. Mauris vitae tortor a orci maximus malesuada. Quisque sapien lacus, auctor rhoncus condimentum ut, lacinia sit amet magna. Sed id porttitor ligula. Aenean in lacus mauris. Duis tincidunt laoreet molestie. Vestibulum vitae elit mattis, eleifend ex nec, pharetra orci. Suspendisse ullamcorper diam sed ultrices dictum. Duis vitae augue lorem. Nulla vitae lorem volutpat, ornare magna accumsan, lobortis neque. Praesent interdum quis augue et aliquam. Morbi aliquam maximus metus, a facilisis velit egestas vel. <br /><br />Pellentesque commodo purus a ipsum luctus, mattis ullamcorper nunc cursus. Praesent quis ultrices nunc. Praesent eros elit, tristique ut maximus et, efficitur ut enim. Mauris iaculis fermentum blandit. Sed id viverra felis. Morbi at pulvinar diam, a sagittis erat?\",\n    \"environment\": {\n        \"id\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/questions/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"questions",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/questions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"questions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/questions/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"questions",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "response",
+			"item": [
+				{
+					"name": "add",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"text\",\n    \"question\": {\n        \"id\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/responses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"responses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\": \"text\",\n    \"question\": {\n        \"id\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/responses/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"responses",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/responses",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"responses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/responses/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"responses",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"token = pm.response.headers.get(\"Authorization\")",
+							"postman.setEnvironmentVariable(\"token\", token);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"giovana.ragazzoni@gmail.com\",\n    \"password\": \"00000@2021\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
