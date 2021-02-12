@@ -19,7 +19,7 @@ def create_app():
     except OSError:
         pass
 
-    from rest_sftp import server
+    from rest_sftp.requests import server
 
     app.register_blueprint(server.bp, url_prefix="/api/server")
 

@@ -3,12 +3,12 @@ import logging
 import flask
 from flask import Blueprint
 
-from rest_sftp import ftp_util
-from rest_sftp.http_util import check_param
+from rest_sftp.ftp import ftp_service
+from rest_sftp.requests.http_util import check_param
 
 bp = Blueprint("sftp", __name__)
 
-ftp = ftp_util.FtpUtil()
+ftp = ftp_service.FtpService.instance()
 
 
 @bp.route("/structure", methods=["GET"])

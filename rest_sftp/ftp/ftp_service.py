@@ -2,8 +2,10 @@ import logging
 import os
 import stat
 
-from rest_sftp.ftp_connection import FTPConnection
-from rest_sftp.ftp_connection_pool import FTPConnectionPool
+from rest_sftp.ftp.ftp_cache_service import FtpCacheService
+from rest_sftp.ftp.ftp_connection import FTPConnection
+from rest_sftp.ftp.ftp_connection_pool import FTPConnectionPool
+from rest_sftp.singleton import Singleton
 
 SFTP_HOSTNAME = os.getenv("SFTP_HOSTNAME")
 SFTP_USERNAME = os.getenv("SFTP_USERNAME")
@@ -40,56 +42,6 @@ def _get_file_path(full_path_enabled, local_path, f):
     return os.path.join(local_path, f.filename) if full_path_enabled else f.filename
 
 
-def _is_base_path(local_path):
-    return local_path == "/"
-
-
-def _is_root_default_tree(local_path, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled):
-    return _is_base_path(local_path) \
-           and recursive_enabled \
-           and not ignore_hidden_file_enabled \
-           and absolute_path_enabled
-
-
-def _tree_from_cache(cache, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled,
-                     local_path):
-    files = []
-    for item in cache:
-        if isinstance(item, dict):
-            files_in_folder = _read_dir_from_cache(item, recursive_enabled, ignore_hidden_file_enabled,
-                                                   absolute_path_enabled, local_path)
-
-            if isinstance(files_in_folder, list):
-                return files_in_folder
-
-            files.append(files_in_folder)
-        else:
-            f = _read_file_from_cache(item, ignore_hidden_file_enabled, absolute_path_enabled)
-            if f is not None:
-                files.append(f)
-    return files
-
-
-def _read_file_from_cache(cache, ignore_hidden_file_enabled, absolute_path_enabled):
-    filename = _get_filename(cache)
-    if not ignore_hidden_file_enabled or not filename.startswith("."):
-        return cache if absolute_path_enabled else filename
-    return None
-
-
-def _read_dir_from_cache(cache, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled, local_path):
-    for key, value in cache.items():
-        files_in_folder = _tree_from_cache(value, recursive_enabled, ignore_hidden_file_enabled,
-                                           absolute_path_enabled, local_path) \
-            if not _is_base_path(local_path) or recursive_enabled else []
-        folder_name = key if absolute_path_enabled else _get_filename(key)
-        return {folder_name: files_in_folder} if local_path != key else files_in_folder
-
-
-def _get_filename(absolut_path):
-    return absolut_path.split(os.path.sep)[-1:][0]
-
-
 def _create_dir(conn, remote_path, is_dir=True):
     dirs = remote_path.split(os.path.sep)
     current_dir = dirs[0]
@@ -103,36 +55,32 @@ def _create_dir(conn, remote_path, is_dir=True):
             conn.mkdir(current_dir)
 
 
-class FtpUtil:
+@Singleton
+class FtpService:
 
     def __init__(self):
         self.pool = FTPConnectionPool(sftp_hostname=SFTP_HOSTNAME, sftp_username=SFTP_USERNAME,
                                       sftp_key_path=SFTP_KEY_PATH, sftp_port=SFTP_PORT,
                                       factory=FTPConnection.open_connection, capacity=SFTP_CONNECTION_POOL_CAPACITY)
-        self.cache = None
+        self.cacheService = FtpCacheService()
 
     def read_tree(self, folder, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled):
-        if self.cache is not None:
-            return self._tree_from_cache(folder, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled)
+        remote_path, local_path = _get_remote_and_local_path(folder)
+
+        content = self.cacheService.read_tree(folder, local_path, recursive_enabled, ignore_hidden_file_enabled,
+                                              absolute_path_enabled)
+        if content is not None:
+            return content
 
         conn = self.pool.get_resource().sftp
-        remote_path, local_path = _get_remote_and_local_path(folder)
         logging.info("reading tree")
         content = _read_tree(recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled, conn, remote_path,
                              local_path)
 
-        if _is_root_default_tree(local_path, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled):
-            self.cache = content
+        self.cacheService.save_cache(content, local_path, recursive_enabled, ignore_hidden_file_enabled,
+                                     absolute_path_enabled)
 
         return content
-
-    def _tree_from_cache(self, folder, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled):
-        remote_path, local_path = _get_remote_and_local_path(folder)
-        if _is_root_default_tree(local_path, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled):
-            return self.cache
-        else:
-            return _tree_from_cache(self.cache, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled,
-                                    folder)
 
     def get_file(self, filepath, local_path):
         remote_filepath = os.path.join(SFTP_BASE_FOLDER, filepath)
