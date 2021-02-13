@@ -55,6 +55,32 @@ def _create_dir(conn, remote_path, is_dir=True):
             conn.mkdir(current_dir)
 
 
+def _is_filepath_a_dir(conn, filepath):
+    return stat.S_ISDIR(conn.stat(filepath).st_mode)
+
+
+def _filepath_exists(conn, filepath):
+    try:
+        conn.stat(filepath)
+        return True
+    except FileNotFoundError:
+        return False
+
+
+def _rename_old_filepath(conn, old_remote_path, is_dir):
+    attempt = 1
+    new_remote_path = None
+    while attempt == 1 or _filepath_exists(conn, new_remote_path):
+        if is_dir:
+            new_remote_path = f"{old_remote_path[:-1]}_{attempt}/"
+        else:
+            path = os.path.splitext(old_remote_path)
+            new_remote_path = f"{path[0]}_{attempt}{path[1]}"
+        attempt += 1
+
+    conn.posix_rename(old_remote_path, new_remote_path)
+
+
 @Singleton
 class FtpService:
 
@@ -82,25 +108,48 @@ class FtpService:
 
         return content
 
-    def get_file(self, filepath, local_path):
-        remote_filepath = os.path.join(SFTP_BASE_FOLDER, filepath)
+    def get_file(self, filepath, rest_local_path):
+        remote_path, _ = _get_remote_and_local_path(filepath)
         conn = self.pool.get_resource().sftp
-        logging.info(f"downloading {remote_filepath} to {local_path}")
-        conn.get(remote_filepath, local_path)
-        logging.info(f"downloaded {remote_filepath} to {local_path}")
+        logging.info(f"downloading {remote_path} to {rest_local_path}")
+        conn.get(remote_path, rest_local_path)
+        logging.info(f"downloaded {remote_path} to {rest_local_path}")
 
     def upload(self, filepath, f):
-        remote_filepath = os.path.join(SFTP_BASE_FOLDER, filepath)
+        remote_path, _ = _get_remote_and_local_path(filepath)
         conn = self.pool.get_resource().sftp
-        _create_dir(conn, remote_filepath)
+        _create_dir(conn, remote_path)
 
         if isinstance(f, str):
-            remote_filepath = os.path.join(remote_filepath, os.path.basename(f))
-            logging.info(f"uploading {remote_filepath} to {f}")
-            conn.put(f, remote_filepath)
-            logging.info(f"uploaded {remote_filepath} to {f}")
+            remote_path = os.path.join(remote_path, os.path.basename(f))
+            logging.info(f"uploading {remote_path} to {f}")
+            conn.put(f, remote_path)
+            logging.info(f"uploaded {remote_path} to {f}")
         else:
-            remote_filepath = os.path.join(remote_filepath, f.filename)
-            logging.info(f"uploading file to {remote_filepath}")
-            conn.putfo(f, remote_filepath)
-            logging.info(f"file uploaded to {remote_filepath}")
+            remote_path = os.path.join(remote_path, f.filename)
+            logging.info(f"uploading file to {remote_path}")
+            conn.putfo(f, remote_path)
+            logging.info(f"file uploaded to {remote_path}")
+
+    def delete(self, filepath):
+        remote_path, _ = _get_remote_and_local_path(filepath)
+        conn = self.pool.get_resource().sftp
+
+        if _is_filepath_a_dir(conn, remote_path):
+            conn.rmdir(remote_path)
+        else:
+            conn.remove(remote_path)
+
+    def move_to_bin(self, filepath):
+        remote_path, _ = _get_remote_and_local_path(filepath)
+        conn = self.pool.get_resource().sftp
+
+        new_remote_path, _ = _get_remote_and_local_path(os.path.join(".trash", filepath))
+        old_remote_path, _ = _get_remote_and_local_path(filepath)
+
+        is_dir = _is_filepath_a_dir(conn, old_remote_path)
+        if _filepath_exists(conn, new_remote_path):
+            _rename_old_filepath(conn, new_remote_path, is_dir)
+
+        _create_dir(conn, new_remote_path, is_dir)
+        conn.posix_rename(old_remote_path, new_remote_path)

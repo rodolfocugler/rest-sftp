@@ -1,5 +1,6 @@
 import logging
 
+import flask
 from flask_restx import Namespace, Resource, reqparse, inputs
 from werkzeug.datastructures import FileStorage
 
@@ -14,8 +15,16 @@ _post_parser.add_argument("filepath", type=str, required=True, help="Folder wher
 _post_parser.add_argument("f", type=FileStorage, location="files", help="File", required=True)
 
 _get_parser = reqparse.RequestParser()
-_get_parser.add_argument("file_paths", type=str, required=True, help="File paths to download joined by `;`", default="/")
-_get_parser.add_argument("zip_enabled", type=inputs.boolean, required=False, help="Zip all files before downloading", default=True)
+_get_parser.add_argument("file_paths", type=str, required=True, help="File paths to download joined by `;`",
+                         default="/")
+_get_parser.add_argument("zip_enabled", type=inputs.boolean, required=False, help="Zip all files before downloading",
+                         default=True)
+
+_delete_parser = reqparse.RequestParser()
+_delete_parser.add_argument("filepath", type=str, required=True, help="Filepath to delete (folder or file)",
+                            default="/")
+_delete_parser.add_argument("move_to_bin_enabled", type=inputs.boolean, required=False, default=True,
+                            help="Move file or folder to the bin (`.trash`) instead of delete it")
 
 
 @api.route("/ftp")
@@ -54,5 +63,30 @@ class FTPFile(Resource):
         zip_enabled = args["zip_enabled"]
 
         logging.info(f"args: {args}")
+
+        return "OK"
+
+    @api.doc("/",
+             responses={
+                 401: "UNAUTHORIZED",
+                 200: "OK",
+                 400: "BAD REQUEST"
+             })
+    @api.expect(_delete_parser)
+    def delete(self):
+        args = _delete_parser.parse_args()
+
+        filepath = args["filepath"]
+        move_to_bin_enabled = args["move_to_bin_enabled"]
+
+        try:
+            if move_to_bin_enabled:
+                ftp.move_to_bin(filepath)
+            else:
+                ftp.delete(filepath)
+        except FileNotFoundError:
+            message = f"{filepath} does not exist."
+            logging.error(message)
+            flask.abort(400, description=message)
 
         return "OK"

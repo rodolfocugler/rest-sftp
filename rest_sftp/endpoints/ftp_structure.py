@@ -47,4 +47,4 @@ class FTPStructure(Resource):
         except FileNotFoundError:
             message = f"{folder} does not exist."
             logging.error(message)
-            flask.abort(flask.jsonify(message=message))
+            flask.abort(400, description=message)
