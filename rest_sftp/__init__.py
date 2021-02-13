@@ -6,6 +6,8 @@ from flask_basicauth import BasicAuth
 from logstash_async.formatter import LogstashFormatter
 from logstash_async.handler import AsynchronousLogstashHandler
 
+from rest_sftp.endpoints import api
+
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
@@ -19,10 +21,9 @@ def create_app():
     except OSError:
         pass
 
-    from rest_sftp.requests import server
+    from rest_sftp.endpoints import ftp_file
 
-    app.register_blueprint(server.bp, url_prefix="/api/server")
-
+    api.init_app(app)
     configure_logging(app)
     BasicAuth(app)
     return app
