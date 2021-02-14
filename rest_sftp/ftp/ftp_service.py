@@ -115,13 +115,13 @@ class FtpService:
         conn.get(remote_path, rest_local_path)
         logging.info(f"downloaded {remote_path} to {rest_local_path}")
 
-    def upload(self, filepath, f):
+    def upload(self, filepath, f, filename=None):
         remote_path, _ = _get_remote_and_local_path(filepath)
         conn = self.pool.get_resource().sftp
         _create_dir(conn, remote_path)
 
         if isinstance(f, str):
-            remote_path = os.path.join(remote_path, os.path.basename(f))
+            remote_path = os.path.join(remote_path, filename)
             logging.info(f"uploading {remote_path} to {f}")
             conn.put(f, remote_path)
             logging.info(f"uploaded {remote_path} to {f}")
@@ -153,3 +153,13 @@ class FtpService:
 
         _create_dir(conn, new_remote_path, is_dir)
         conn.posix_rename(old_remote_path, new_remote_path)
+
+    def filepath_exists(self, filepath):
+        conn = self.pool.get_resource().sftp
+        remote_path, _ = _get_remote_and_local_path(filepath)
+        return _filepath_exists(conn, remote_path)
+
+    def is_filepath_a_dir(self, filepath):
+        conn = self.pool.get_resource().sftp
+        remote_path, _ = _get_remote_and_local_path(filepath)
+        return stat.S_ISDIR(conn.stat(remote_path).st_mode)

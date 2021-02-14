@@ -1,12 +1,15 @@
 import logging
+from http import HTTPStatus
 
 import flask
 from flask_restx import Namespace, Resource, reqparse, inputs
 from werkzeug.datastructures import FileStorage
 
+from rest_sftp.download import download_service
 from rest_sftp.ftp import ftp_service
 
 ftp = ftp_service.FtpService.instance()
+download_service = download_service.DownloadService.instance()
 
 api = Namespace("ftp")
 
@@ -32,9 +35,9 @@ class FTPFile(Resource):
 
     @api.doc("/",
              responses={
-                 401: "UNAUTHORIZED",
-                 200: "OK",
-                 400: "BAD REQUEST"
+                 HTTPStatus.UNAUTHORIZED: "Request unauthorized",
+                 HTTPStatus.BAD_REQUEST: "Parameters were not provided",
+                 HTTPStatus.OK: "File was uploaded successfully"
              })
     @api.expect(_post_parser)
     def post(self):
@@ -47,14 +50,15 @@ class FTPFile(Resource):
 
         ftp.upload(filepath, f)
 
-        return "OK"
-
     @api.doc("/",
              responses={
-                 401: "UNAUTHORIZED",
-                 200: "OK",
-                 400: "BAD REQUEST"
+                 HTTPStatus.UNAUTHORIZED: "Request unauthorized",
+                 HTTPStatus.BAD_REQUEST: "Parameters were not provided",
+                 HTTPStatus.FORBIDDEN: "Request cannot be executed",
+                 HTTPStatus.NOT_FOUND: "File not found",
+                 HTTPStatus.OK: "File requested"
              })
+    @api.produces(["application/zip", "application/octet-stream"])
     @api.expect(_get_parser)
     def get(self):
         args = _get_parser.parse_args()
@@ -64,13 +68,21 @@ class FTPFile(Resource):
 
         logging.info(f"args: {args}")
 
-        return "OK"
+        try:
+            path, mimetype = download_service.get_content(file_paths, zip_enabled)
+
+            return flask.send_file(path, mimetype=mimetype)
+        except FileNotFoundError as e:
+            flask.abort(HTTPStatus.NOT_FOUND, description=str(e))
+        except IsADirectoryError as e:
+            flask.abort(HTTPStatus.FORBIDDEN, description=str(e))
 
     @api.doc("/",
              responses={
-                 401: "UNAUTHORIZED",
-                 200: "OK",
-                 400: "BAD REQUEST"
+                 HTTPStatus.UNAUTHORIZED: "Request unauthorized",
+                 HTTPStatus.BAD_REQUEST: "Parameters were not provided",
+                 HTTPStatus.NOT_FOUND: "File not found",
+                 HTTPStatus.OK: "File delete successfully"
              })
     @api.expect(_delete_parser)
     def delete(self):
@@ -87,6 +99,4 @@ class FTPFile(Resource):
         except FileNotFoundError:
             message = f"{filepath} does not exist."
             logging.error(message)
-            flask.abort(400, description=message)
-
-        return "OK"
+            flask.abort(HTTPStatus.NOT_FOUND, description=message)

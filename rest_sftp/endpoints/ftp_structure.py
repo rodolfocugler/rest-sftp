@@ -1,4 +1,5 @@
 import logging
+from http import HTTPStatus
 
 import flask
 from flask_restx import Namespace, Resource, reqparse, inputs
@@ -24,11 +25,11 @@ class FTPStructure(Resource):
 
     @api.doc("/",
              responses={
-                 401: "UNAUTHORIZED",
-                 200: "OK",
-                 400: "BAD REQUEST"
-             }
-             )
+                 HTTPStatus.UNAUTHORIZED: "Request unauthorized",
+                 HTTPStatus.BAD_REQUEST: "Parameters were not provided",
+                 HTTPStatus.NOT_FOUND: "Folder not found",
+                 HTTPStatus.OK: "Folder structure requested"
+             })
     @api.expect(_get_parser)
     def get(self):
         args = _get_parser.parse_args()
@@ -47,4 +48,4 @@ class FTPStructure(Resource):
         except FileNotFoundError:
             message = f"{folder} does not exist."
             logging.error(message)
-            flask.abort(400, description=message)
+            flask.abort(HTTPStatus.NOT_FOUND, description=message)
