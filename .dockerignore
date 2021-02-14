@@ -1,0 +1,8 @@
+__pycache__/
+.idea/
+key/
+files/
+collections/
+instance/
+Dockerfile
+README.md
