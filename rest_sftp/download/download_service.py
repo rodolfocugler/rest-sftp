@@ -1,8 +1,11 @@
 import logging
 import mimetypes
 import os
+import queue
+import shutil
 import uuid
 import zipfile
+from datetime import datetime
 from urllib.request import urlretrieve
 
 import rest_sftp
@@ -22,6 +25,7 @@ def _get_base_folder():
 
 
 def _zip_files(downloaded_files, reference_files):
+    logging.info(f"zipping files")
     identifier = str(uuid.uuid4())
     local_path = os.path.join(_get_base_folder(), f"{identifier}.zip")
     with zipfile.ZipFile(local_path, "w", zipfile.ZIP_DEFLATED, True, 9) as zf:
@@ -38,6 +42,7 @@ class DownloadService:
 
     def __init__(self):
         self.ftp = ftp_service.FtpService.instance()
+        self.files_to_delete = queue.Queue()
 
     def get_content(self, file_paths, zip_enabled):
         file_paths = file_paths.split(";")
@@ -47,6 +52,7 @@ class DownloadService:
         filepath = _zip_files(downloaded_files, file_paths) \
             if zip_enabled or len(downloaded_files) > 1 \
             else downloaded_files[0]
+        logging.info(f"sending files")
         return filepath, _get_mimetype(filepath)
 
     def _download_files(self, file_paths):
@@ -59,6 +65,7 @@ class DownloadService:
             local_path = os.path.join(base_folder, f"{identifier}{filename}")
             self.ftp.get_file(filepath, local_path)
             downloaded_files.append(local_path)
+            self.add_file_to_queue(local_path)
         return downloaded_files
 
     def _check_if_files_exist(self, file_paths):
@@ -87,3 +94,32 @@ class DownloadService:
         urlretrieve(url, local_path)
         self.ftp.upload(filepath, local_path, filename)
         os.remove(local_path)
+
+    def add_file_to_queue(self, path):
+        self.files_to_delete.put({
+            "size": os.stat(path).st_size,
+            "timestamp": datetime.now(),
+            "path": path
+        })
+
+    def delete_files(self):
+        logging.info("deleting files")
+        size = self.files_to_delete.qsize()
+        date = datetime.now()
+        for i in range(size):
+            f = self.files_to_delete.get()
+            delta_in_seconds = (date - f["timestamp"]).total_seconds()
+            size_in_mb = f["size"] / 1000000
+            if size_in_mb / delta_in_seconds <= 1:
+                logging.info(f"deleting {f['path']}")
+                os.remove(f["path"])
+            else:
+                self.files_to_delete.put(f)
+
+    @staticmethod
+    def recreate_base_folder():
+        logging.info("recreating base folder")
+        folder = _get_base_folder()
+        if os.path.exists(folder):
+            shutil.rmtree(folder)
+        os.makedirs(folder)

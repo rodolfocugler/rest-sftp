@@ -1,12 +1,16 @@
 import logging
 import os
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 from flask_basicauth import BasicAuth
 from logstash_async.formatter import LogstashFormatter
 from logstash_async.handler import AsynchronousLogstashHandler
 
+from rest_sftp.download import download_service
 from rest_sftp.endpoints import api
+
+download_service = download_service.DownloadService.instance()
 
 
 def create_app():
@@ -25,8 +29,16 @@ def create_app():
 
     api.init_app(app)
     configure_logging(app)
+    configure_background_scheduler()
     BasicAuth(app)
     return app
+
+
+def configure_background_scheduler():
+    download_service.recreate_base_folder()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=download_service.delete_files, trigger="interval", seconds=600)
+    scheduler.start()
 
 
 def configure_logging(app):
