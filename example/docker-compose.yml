@@ -3,7 +3,7 @@ version: "3.8"
 
 services:
   sftp:
-    image: rodolfocugler/sftp:debian
+    image: rodolfocugler/sftp:arm32v7
     restart: always
     volumes:
       - ./key.pub:/home/${SFTP_USERNAME}/.ssh/keys/key.pub:ro
@@ -11,7 +11,7 @@ services:
     command: ${SFTP_USERNAME}::1001
 
   rest-sftp:
-    image: rodolfocugler/rest-sftp:x86
+    image: rodolfocugler/rest-sftp:arm32v7
     restart: always
     volumes:
       - ./key:${SFTP_KEY_PATH}:ro
