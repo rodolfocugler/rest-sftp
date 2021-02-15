@@ -1,0 +1,30 @@
+---
+version: "3.8"
+
+services:
+  sftp:
+    image: rodolfocugler/sftp:debian
+    restart: always
+    volumes:
+      - ./key.pub:/home/${SFTP_USERNAME}/.ssh/keys/key.pub:ro
+      - ./sftp:/home/${SFTP_USERNAME}/${SFTP_BASE_FOLDER}
+    command: ${SFTP_USERNAME}::1001
+
+  rest-sftp:
+    image: rodolfocugler/rest-sftp:x86
+    restart: always
+    volumes:
+      - ./key:${SFTP_KEY_PATH}:ro
+    ports:
+      - "5000:80"
+    depends_on:
+      - sftp
+    environment:
+      APP_NAME: rest-sftp
+      BASIC_AUTH_USERNAME: ${REST_SFTP_USERNAME}
+      BASIC_AUTH_PASSWORD: ${REST_SFTP_PASSWORD}
+      SFTP_HOSTNAME: sftp
+      SFTP_USERNAME: ${SFTP_USERNAME}
+      SFTP_KEY_PATH: ${SFTP_KEY_PATH}
+      SFTP_PORT: ${SFTP_PORT}
+      SFTP_BASE_FOLDER: ${SFTP_BASE_FOLDER}
