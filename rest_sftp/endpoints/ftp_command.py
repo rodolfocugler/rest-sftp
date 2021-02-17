@@ -1,4 +1,5 @@
 import logging
+import sys
 from http import HTTPStatus
 
 import flask
@@ -100,3 +101,5 @@ class FTPCommand(Resource):
             message = f"{filepath} does not exist."
             logging.error(message)
             flask.abort(HTTPStatus.NOT_FOUND, description=message)
+        except OSError as e:
+            print("Unexpected error:", e)

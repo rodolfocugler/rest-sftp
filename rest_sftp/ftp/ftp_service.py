@@ -55,7 +55,7 @@ def _create_dir(conn, remote_path, is_dir=True):
             conn.mkdir(current_dir)
 
 
-def _is_filepath_a_dir(conn, filepath):
+def _is_dir(conn, filepath):
     return stat.S_ISDIR(conn.stat(filepath).st_mode)
 
 
@@ -79,6 +79,19 @@ def _rename_old_filepath(conn, old_remote_path, is_dir):
         attempt += 1
 
     conn.posix_rename(old_remote_path, new_remote_path)
+
+
+def _delete_dir(conn, remote_path):
+    files = conn.listdir(remote_path)
+
+    for f in files:
+        filepath = os.path.join(remote_path, f)
+        if _is_dir(conn, filepath):
+            _delete_dir(conn, filepath)
+        else:
+            conn.remove(filepath)
+
+    conn.rmdir(remote_path)
 
 
 @Singleton
@@ -136,8 +149,8 @@ class FtpService:
         remote_path, _ = _get_remote_and_local_path(filepath)
         conn = self.pool.get_resource().sftp
 
-        if _is_filepath_a_dir(conn, remote_path):
-            conn.rmdir(remote_path)
+        if _is_dir(conn, remote_path):
+            _delete_dir(conn, remote_path)
         else:
             conn.remove(remote_path)
         self.cacheService.invalidate_cache()
@@ -149,7 +162,7 @@ class FtpService:
         new_remote_path, _ = _get_remote_and_local_path(os.path.join(".trash", filepath))
         old_remote_path, _ = _get_remote_and_local_path(filepath)
 
-        is_dir = _is_filepath_a_dir(conn, old_remote_path)
+        is_dir = _is_dir(conn, old_remote_path)
         if _filepath_exists(conn, new_remote_path):
             _rename_old_filepath(conn, new_remote_path, is_dir)
 
