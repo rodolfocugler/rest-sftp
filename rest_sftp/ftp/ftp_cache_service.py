@@ -77,3 +77,6 @@ class FtpCacheService:
         else:
             return _read_tree(self.cache, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled,
                               folder)
+
+    def invalidate_cache(self):
+        self.cache = None

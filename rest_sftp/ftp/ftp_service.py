@@ -130,6 +130,7 @@ class FtpService:
             logging.info(f"uploading file to {remote_path}")
             conn.putfo(f, remote_path)
             logging.info(f"file uploaded to {remote_path}")
+        self.cacheService.invalidate_cache()
 
     def delete(self, filepath):
         remote_path, _ = _get_remote_and_local_path(filepath)
@@ -139,6 +140,7 @@ class FtpService:
             conn.rmdir(remote_path)
         else:
             conn.remove(remote_path)
+        self.cacheService.invalidate_cache()
 
     def move_to_bin(self, filepath):
         remote_path, _ = _get_remote_and_local_path(filepath)
@@ -153,6 +155,7 @@ class FtpService:
 
         _create_dir(conn, new_remote_path, is_dir)
         conn.posix_rename(old_remote_path, new_remote_path)
+        self.cacheService.invalidate_cache()
 
     def filepath_exists(self, filepath):
         conn = self.pool.get_resource().sftp
