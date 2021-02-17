@@ -14,8 +14,15 @@ download_service = download_service.DownloadService.instance()
 api = Namespace("commands")
 
 _post_parser = reqparse.RequestParser()
-_post_parser.add_argument("filepath", type=str, required=True, help="Folder where the file will be saved")
+_post_parser.add_argument("filepath", type=str, required=True, help="Folder where the file will be saved",
+                          default="/")
 _post_parser.add_argument("f", type=FileStorage, location="files", help="File", required=True)
+
+_put_parser = reqparse.RequestParser()
+_put_parser.add_argument("filepath_from", type=str, required=True, help="Filepath where the file is saved",
+                         default="/")
+_put_parser.add_argument("filepath_to", type=str, required=True, help="Filepath where the file will be saved",
+                         default="/")
 
 _get_parser = reqparse.RequestParser()
 _get_parser.add_argument("file_paths", type=str, required=True, help="File paths to download joined by `;`",
@@ -32,6 +39,33 @@ _delete_parser.add_argument("move_to_bin_enabled", type=inputs.boolean, required
 
 @api.route("/commands")
 class FTPCommand(Resource):
+
+    @api.doc("/",
+             responses={
+                 HTTPStatus.UNAUTHORIZED: "Request unauthorized",
+                 HTTPStatus.BAD_REQUEST: "Parameters were not provided",
+                 HTTPStatus.FORBIDDEN: "Request cannot be executed",
+                 HTTPStatus.OK: "Filepath was updated successfully"
+             })
+    @api.expect(_put_parser)
+    def put(self):
+        try:
+            args = _put_parser.parse_args()
+
+            filepath_from = args["filepath_from"]
+            filepath_to = args["filepath_to"]
+
+            logging.info(f"args: {args}")
+
+            ftp.move(filepath_from, filepath_to)
+        except FileNotFoundError:
+            message = f"{filepath_from} or {filepath_to} does not exist."
+            logging.error(message)
+            flask.abort(HTTPStatus.NOT_FOUND, description=message)
+        except (PermissionError, OSError):
+            message = "Request cannot be executed"
+            logging.error(message)
+            flask.abort(HTTPStatus.FORBIDDEN, description=message)
 
     @api.doc("/",
              responses={
