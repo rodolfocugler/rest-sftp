@@ -14,7 +14,7 @@ download_service = download_service.DownloadService.instance()
 api = Namespace("image")
 
 _get_parser = reqparse.RequestParser()
-_get_parser.add_argument("file_path", type=str, required=True, help="Image path to download",
+_get_parser.add_argument("filepath", type=str, required=True, help="Image path to download",
                          default="/")
 _get_parser.add_argument("width", type=int, required=True, help="Width to reduce the image size",
                          default=100)
@@ -38,17 +38,21 @@ class FTPImage(Resource):
     def get(self):
         args = _get_parser.parse_args()
 
-        file_path = args["file_path"]
+        filepath = args["filepath"]
         height = args["height"]
         width = args["width"]
 
         logging.info(f"args: {args}")
 
         try:
-            path, mimetype = download_service.get_content(file_path, False)
+            path, mimetype = download_service.get_content(filepath, False)
             content = get_thumbnail_as_bytes(width, height, path)
             return flask.send_file(content, mimetype="image/jpeg")
         except FileNotFoundError as e:
             flask.abort(HTTPStatus.NOT_FOUND, description=str(e))
         except IsADirectoryError as e:
             flask.abort(HTTPStatus.FORBIDDEN, description=str(e))
+        except PermissionError:
+            message = "Request cannot be executed"
+            logging.error(message)
+            flask.abort(HTTPStatus.FORBIDDEN, description=message)

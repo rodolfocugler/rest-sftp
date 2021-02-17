@@ -69,7 +69,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/api/image?file_path=test/image.jpg&width=1000&height=1000",
+					"raw": "{{url}}/api/image?filepath=test/image.jpg&width=1000&height=1000",
 					"host": [
 						"{{url}}"
 					],
@@ -79,7 +79,7 @@
 					],
 					"query": [
 						{
-							"key": "file_path",
+							"key": "filepath",
 							"value": "test/image.jpg"
 						},
 						{
