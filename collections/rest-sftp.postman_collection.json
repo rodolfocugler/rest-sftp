@@ -26,13 +26,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/api/ftp?zip_enabled=False&file_paths=test/image.jpg",
+					"raw": "{{url}}/api/commands?zip_enabled=False&file_paths=test/image.jpg",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"api",
-						"ftp"
+						"commands"
 					],
 					"query": [
 						{
@@ -116,18 +116,18 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{url}}/api/structure?folder=test&recursive_enabled=True&ignore_hidden_file_enabled=True&absolute_path_enabled=True",
+					"raw": "{{url}}/api/tree?folder=/&recursive_enabled=True&ignore_hidden_file_enabled=False&absolute_path_enabled=True",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"api",
-						"structure"
+						"tree"
 					],
 					"query": [
 						{
 							"key": "folder",
-							"value": "test"
+							"value": "/"
 						},
 						{
 							"key": "recursive_enabled",
@@ -135,7 +135,7 @@
 						},
 						{
 							"key": "ignore_hidden_file_enabled",
-							"value": "True"
+							"value": "False"
 						},
 						{
 							"key": "absolute_path_enabled",
@@ -171,13 +171,13 @@
 					"formdata": []
 				},
 				"url": {
-					"raw": "{{url}}/api/ftp?filepath=test/&move_to_bin_enabled=False",
+					"raw": "{{url}}/api/commands?filepath=test/&move_to_bin_enabled=False",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"api",
-						"ftp"
+						"commands"
 					],
 					"query": [
 						{
@@ -234,12 +234,13 @@
 					]
 				},
 				"url": {
-					"raw": "{{url}}/api/url",
+					"raw": "{{url}}/api/commands/url",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"api",
+						"commands",
 						"url"
 					]
 				}
@@ -270,7 +271,7 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "file",
+							"key": "f",
 							"type": "file",
 							"src": []
 						},
@@ -282,13 +283,13 @@
 					]
 				},
 				"url": {
-					"raw": "{{url}}/api/ftp",
+					"raw": "{{url}}/api/commands",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
 						"api",
-						"ftp"
+						"commands"
 					]
 				}
 			},
