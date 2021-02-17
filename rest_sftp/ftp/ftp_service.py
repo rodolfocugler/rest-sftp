@@ -170,6 +170,14 @@ class FtpService:
         conn.posix_rename(old_remote_path, new_remote_path)
         self.cacheService.invalidate_cache()
 
+    def move(self, filepath_from, filepath_to):
+        remote_path_from, _ = _get_remote_and_local_path(filepath_from)
+        remote_path_to, _ = _get_remote_and_local_path(filepath_to)
+        conn = self.pool.get_resource().sftp
+
+        conn.posix_rename(remote_path_from, remote_path_to)
+        self.cacheService.invalidate_cache()
+
     def filepath_exists(self, filepath):
         conn = self.pool.get_resource().sftp
         remote_path, _ = _get_remote_and_local_path(filepath)
