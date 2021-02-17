@@ -11,7 +11,7 @@ from rest_sftp.ftp import ftp_service
 ftp = ftp_service.FtpService.instance()
 download_service = download_service.DownloadService.instance()
 
-api = Namespace("ftp")
+api = Namespace("commands")
 
 _post_parser = reqparse.RequestParser()
 _post_parser.add_argument("filepath", type=str, required=True, help="Folder where the file will be saved")
@@ -30,8 +30,8 @@ _delete_parser.add_argument("move_to_bin_enabled", type=inputs.boolean, required
                             help="Move file or folder to the bin (`.trash`) instead of delete it")
 
 
-@api.route("/ftp")
-class FTPFile(Resource):
+@api.route("/commands")
+class FTPCommand(Resource):
 
     @api.doc("/",
              responses={

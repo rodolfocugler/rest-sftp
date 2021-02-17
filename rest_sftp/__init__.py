@@ -25,7 +25,7 @@ def create_app():
     except OSError:
         pass
 
-    from rest_sftp.endpoints import ftp_file
+    from rest_sftp.endpoints import ftp_command
 
     api.init_app(app)
     configure_logging(app)

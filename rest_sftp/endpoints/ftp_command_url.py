@@ -15,8 +15,8 @@ _post_parser.add_argument("filepath", type=str, required=True, help="Folder wher
 _post_parser.add_argument("url", type=str, required=True, help="URL to download the file")
 
 
-@api.route("/url")
-class FTPImage(Resource):
+@api.route("/commands/url")
+class FTPCommandUrl(Resource):
 
     @api.doc("/",
              responses={
