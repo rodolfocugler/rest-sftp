@@ -1,5 +1,4 @@
 import logging
-import sys
 from http import HTTPStatus
 
 import flask
@@ -38,18 +37,24 @@ class FTPCommand(Resource):
              responses={
                  HTTPStatus.UNAUTHORIZED: "Request unauthorized",
                  HTTPStatus.BAD_REQUEST: "Parameters were not provided",
+                 HTTPStatus.FORBIDDEN: "Request cannot be executed",
                  HTTPStatus.OK: "File was uploaded successfully"
              })
     @api.expect(_post_parser)
     def post(self):
-        args = _post_parser.parse_args()
+        try:
+            args = _post_parser.parse_args()
 
-        filepath = args["filepath"]
-        f = args["f"]
+            filepath = args["filepath"]
+            f = args["f"]
 
-        logging.info(f"args: {args}")
+            logging.info(f"args: {args}")
 
-        ftp.upload(filepath, f)
+            ftp.upload(filepath, f)
+        except PermissionError:
+            message = "Request cannot be executed"
+            logging.error(message)
+            flask.abort(HTTPStatus.FORBIDDEN, description=message)
 
     @api.doc("/",
              responses={
@@ -77,12 +82,17 @@ class FTPCommand(Resource):
             flask.abort(HTTPStatus.NOT_FOUND, description=str(e))
         except IsADirectoryError as e:
             flask.abort(HTTPStatus.FORBIDDEN, description=str(e))
+        except PermissionError:
+            message = "Request cannot be executed"
+            logging.error(message)
+            flask.abort(HTTPStatus.FORBIDDEN, description=message)
 
     @api.doc("/",
              responses={
                  HTTPStatus.UNAUTHORIZED: "Request unauthorized",
                  HTTPStatus.BAD_REQUEST: "Parameters were not provided",
                  HTTPStatus.NOT_FOUND: "File not found",
+                 HTTPStatus.FORBIDDEN: "Request cannot be executed",
                  HTTPStatus.OK: "File delete successfully"
              })
     @api.expect(_delete_parser)
@@ -101,5 +111,7 @@ class FTPCommand(Resource):
             message = f"{filepath} does not exist."
             logging.error(message)
             flask.abort(HTTPStatus.NOT_FOUND, description=message)
-        except OSError as e:
-            print("Unexpected error:", e)
+        except PermissionError:
+            message = "Request cannot be executed"
+            logging.error(message)
+            flask.abort(HTTPStatus.FORBIDDEN, description=message)

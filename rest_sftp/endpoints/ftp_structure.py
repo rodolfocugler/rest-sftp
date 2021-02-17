@@ -28,6 +28,7 @@ class FTPTree(Resource):
                  HTTPStatus.UNAUTHORIZED: "Request unauthorized",
                  HTTPStatus.BAD_REQUEST: "Parameters were not provided",
                  HTTPStatus.NOT_FOUND: "Folder not found",
+                 HTTPStatus.FORBIDDEN: "Request cannot be executed",
                  HTTPStatus.OK: "Folder structure requested"
              })
     @api.expect(_get_parser)
@@ -49,3 +50,7 @@ class FTPTree(Resource):
             message = f"{folder} does not exist."
             logging.error(message)
             flask.abort(HTTPStatus.NOT_FOUND, description=message)
+        except PermissionError:
+            message = "Request cannot be executed"
+            logging.error(message)
+            flask.abort(HTTPStatus.FORBIDDEN, description=message)
