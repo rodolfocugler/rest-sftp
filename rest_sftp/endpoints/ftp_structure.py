@@ -8,7 +8,7 @@ from rest_sftp.ftp import ftp_service
 
 ftp = ftp_service.FtpService.instance()
 
-api = Namespace("structure")
+api = Namespace("tree")
 
 _get_parser = reqparse.RequestParser()
 _get_parser.add_argument("folder", type=str, required=True, help="Folder to read the tree", default="/")
@@ -20,8 +20,8 @@ _get_parser.add_argument("absolute_path_enabled", type=inputs.boolean, required=
                          help="Appending the full path to the files", default=True)
 
 
-@api.route("/structure")
-class FTPStructure(Resource):
+@api.route("/tree")
+class FTPTree(Resource):
 
     @api.doc("/",
              responses={
