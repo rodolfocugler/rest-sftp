@@ -248,6 +248,54 @@
 			"response": []
 		},
 		{
+			"name": "Move or rename file/folder",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "filepath_from",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "filepath_to",
+							"value": "test1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/api/commands",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"commands"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Upload file",
 			"request": {
 				"auth": {
