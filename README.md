@@ -2,7 +2,7 @@
 
 ![GitHub stars](https://img.shields.io/github/stars/rodolfocugler/rest-sftp?logo=github) ![Docker Stars](https://img.shields.io/docker/stars/rodolfocugler/rest-sftp?label=stars&logo=docker) ![Docker Pulls](https://img.shields.io/docker/pulls/rodolfocugler/rest-sftp?label=pulls&logo=docker)
 
-![logo](logo.png)
+![logo](https://raw.githubusercontent.com/rodolfocugler/rest-sftp/main/logo.png)
 
 # Supported tags and respective `Dockerfile` links
 
