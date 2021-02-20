@@ -1,4 +1,4 @@
-FROM arm32v7/python:3.9
+FROM python:3.9
 
 RUN apt update && apt upgrade -y
 RUN apt install -y \
