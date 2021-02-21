@@ -11,7 +11,7 @@ services:
     command: ${SFTP_USERNAME}::1001
 
   rest-sftp:
-    image: rodolfocugler/rest-sftp:x86
+    image: rodolfocugler/rest-sftp:arm64v8
     restart: always
     volumes:
       - ./key:${SFTP_KEY_PATH}:ro
