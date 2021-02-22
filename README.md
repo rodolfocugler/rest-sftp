@@ -7,8 +7,9 @@
 # Supported tags and respective `Dockerfile` links
 
 - [`x86` (*Dockerfile*)](https://github.com/rodolfocugler/rest-sftp/blob/main/Dockerfile) ![Docker Image Size (x86)](https://img.shields.io/docker/image-size/rodolfocugler/rest-sftp/x86?label=python&logo=python&style=plastic)
-- [`arm32v7` (*Dockerfile*)](https://github.com/rodolfocugler/rest-sftp/blob/arm32v7/Dockerfile) ![Docker Image Size (arm32v7)](https://img.shields.io/docker/image-size/rodolfocugler/rest-sftp/arm32v7?label=arm32v7&logo=raspberry%20pi&style=plastic)
 - [`arm64v8` (*Dockerfile*)](https://github.com/rodolfocugler/rest-sftp/blob/arm64v8/Dockerfile) ![Docker Image Size (arm64v8)](https://img.shields.io/docker/image-size/rodolfocugler/rest-sftp/arm64v8?label=arm64v8&logo=raspberry%20pi&style=plastic)
+
+obs.: in order to run the container in an arm32v7 platform you can build the arm32v7 branch [(*Dockerfile*)](https://github.com/rodolfocugler/rest-sftp/blob/arm32v7/Dockerfile)
 
 # Securely share your files
 

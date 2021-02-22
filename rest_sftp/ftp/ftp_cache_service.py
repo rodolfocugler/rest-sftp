@@ -55,7 +55,7 @@ def _get_filename(absolut_path):
 
 
 def _is_base_path(local_path):
-    return local_path == "fotos"
+    return local_path == "/"
 
 
 def _is_root_default_tree(local_path, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled):
