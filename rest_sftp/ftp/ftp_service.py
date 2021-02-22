@@ -16,10 +16,16 @@ SFTP_CONNECTION_POOL_CAPACITY = int(os.getenv("SFTP_CONNECTION_POOL_CAPACITY", "
 
 
 def _get_remote_and_local_path(folder):
-    if folder != "/" and folder != "":
-        return os.path.join(SFTP_BASE_FOLDER, folder), folder
-    else:
+    if folder == "/" or folder == "":
         return SFTP_BASE_FOLDER, "/"
+
+    if folder.startswith("/"):
+        folder = folder[1:]
+
+    if folder.endswith("/"):
+        folder = folder[:-1]
+
+    return os.path.join(SFTP_BASE_FOLDER, folder), folder
 
 
 def _read_tree(recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled, conn, remote_path, local_path):
@@ -27,11 +33,12 @@ def _read_tree(recursive_enabled, ignore_hidden_file_enabled, absolute_path_enab
     for f in conn.listdir_attr(remote_path):
         path = _get_file_path(absolute_path_enabled, local_path, f)
         if stat.S_ISDIR(f.st_mode):
-            files_in_folder = _read_tree(recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled, conn,
-                                         os.path.join(remote_path, f.filename), path) \
-                if recursive_enabled \
-                else []
-            files.append({path: files_in_folder})
+            if not ignore_hidden_file_enabled or not f.filename.startswith("."):
+                files_in_folder = _read_tree(recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled, conn,
+                                             os.path.join(remote_path, f.filename), path) \
+                    if recursive_enabled \
+                    else []
+                files.append({path: files_in_folder})
         elif not ignore_hidden_file_enabled or not f.filename.startswith("."):
             files.append(path)
 
@@ -106,7 +113,7 @@ class FtpService:
     def read_tree(self, folder, recursive_enabled, ignore_hidden_file_enabled, absolute_path_enabled):
         remote_path, local_path = _get_remote_and_local_path(folder)
 
-        content = self.cacheService.read_tree(folder, local_path, recursive_enabled, ignore_hidden_file_enabled,
+        content = self.cacheService.read_tree(local_path, recursive_enabled, ignore_hidden_file_enabled,
                                               absolute_path_enabled)
         if content is not None:
             return content
