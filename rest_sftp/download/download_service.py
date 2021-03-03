@@ -18,7 +18,7 @@ def _get_mimetype(filename):
 
 
 def _get_base_folder():
-    folder = os.path.join(os.path.dirname(rest_sftp.__file__), "files")
+    folder = os.path.join(os.path.dirname(rest_sftp.__file__), "tmp", "files")
     if not os.path.exists(folder):
         os.makedirs(folder)
     return folder
