@@ -24,13 +24,6 @@ def _get_base_folder():
     return folder
 
 
-def _get_ignored_folder():
-    folder = os.path.join(_get_base_folder(), "ignore")
-    if not os.path.exists(folder):
-        os.makedirs(folder)
-    return folder
-
-
 def _zip_files(downloaded_files, reference_files):
     logging.info(f"zipping files")
     identifier = str(uuid.uuid4())
@@ -65,7 +58,7 @@ class DownloadService:
 
     def _download_files(self, file_paths, zip_enabled):
         downloaded_files = []
-        base_folder = _get_ignored_folder() if zip_enabled else _get_base_folder()
+        base_folder = _get_base_folder()
         for filepath in file_paths:
             logging.info(f"filepath: {filepath}")
             filename = os.path.basename(filepath)
@@ -73,7 +66,8 @@ class DownloadService:
             local_path = os.path.join(base_folder, f"{identifier}{filename}")
             self.ftp.get_file(filepath, local_path)
             downloaded_files.append(local_path)
-            self.add_file_to_queue(local_path)
+            if not zip_enabled:
+                self.add_file_to_queue(local_path)
         return downloaded_files
 
     def _check_if_files_exist(self, file_paths):
