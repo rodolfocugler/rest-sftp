@@ -24,6 +24,13 @@ def _get_base_folder():
     return folder
 
 
+def _get_ignored_folder():
+    folder = os.path.join(_get_base_folder(), "ignore")
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    return folder
+
+
 def _zip_files(downloaded_files, reference_files):
     logging.info(f"zipping files")
     identifier = str(uuid.uuid4())
@@ -48,16 +55,17 @@ class DownloadService:
         file_paths = file_paths.split(";")
         file_paths = list(filter(lambda path: '' != path, file_paths))
         self._check_if_files_exist(file_paths)
-        downloaded_files = self._download_files(file_paths)
+        zip_enabled = zip_enabled or len(file_paths) > 1
+        downloaded_files = self._download_files(file_paths, zip_enabled)
         filepath = _zip_files(downloaded_files, file_paths) \
-            if zip_enabled or len(downloaded_files) > 1 \
+            if zip_enabled \
             else downloaded_files[0]
         logging.info(f"sending files")
         return filepath, _get_mimetype(filepath)
 
-    def _download_files(self, file_paths):
+    def _download_files(self, file_paths, zip_enabled):
         downloaded_files = []
-        base_folder = _get_base_folder()
+        base_folder = _get_ignored_folder() if zip_enabled else _get_base_folder()
         for filepath in file_paths:
             logging.info(f"filepath: {filepath}")
             filename = os.path.basename(filepath)
